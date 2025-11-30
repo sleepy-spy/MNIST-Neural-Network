@@ -426,17 +426,28 @@ def test(
 
 
 def main():
-    if sys.argv[3].lower() == "true":
-        test_label = True
-    else:
-        test_label = False
-    big_data = LoadData(sys.argv[1], sys.argv[2], test_label=test_label)
-    if sys.argv[4].lower() == "train":
-        train(big_data=big_data)
-        print("Training complete")
-    elif sys.argv[4].lower() == "test":
+    train_or_test = (
+        input("Would you like to train the model or test the model? (train/test): ")
+        .lower()
+        .strip()
+    )
+    if train_or_test == "test":
+        invalid_label_presence = True
+        while invalid_label_presence:
+            test_labels_presence = input("Does your test data have labels? (y/n): ")
+            if test_labels_presence == "y":
+                test_label = True
+                invalid_label_presence = False
+            elif test_labels_presence == "n":
+                test_label = False
+                invalid_label_presence = False
+        big_data = LoadData(sys.argv[1], sys.argv[2], test_label=test_label)
         test(big_data=big_data)
         print("Testing complete")
+    elif train_or_test == "train":
+        big_data = LoadData(sys.argv[1], sys.argv[2], test_label=False)
+        train(big_data=big_data)
+        print("Training complete")
 
 
 if __name__ == "__main__":
